@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../constants/Colors';
-import { RECOGNITION_LEVELS, getRecognitionLevel } from '../utils/ppf';
+import { RECOGNITION_LEVELS, getRecognitionLevel, calcPPM } from '../utils/ppf';
 
 interface Props {
   ppf: number;
@@ -12,17 +12,26 @@ export default function PPFDisplay({ ppf, distanceFt }: Props) {
   const level = getRecognitionLevel(ppf);
   const color = level?.color ?? Colors.textMuted;
   const displayPPF = isFinite(ppf) ? ppf.toFixed(1) : '—';
+  const ppm = ppf * 3.28084;
+  const displayPPM = isFinite(ppm) ? ppm.toFixed(0) : '—';
 
   const maxPPF = RECOGNITION_LEVELS[RECOGNITION_LEVELS.length - 1].minPPF * 3;
   const fillPct = Math.min((ppf / maxPPF) * 100, 100);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionLabel}>PIXELS PER FOOT @ {distanceFt} FT</Text>
+      <Text style={styles.sectionLabel}>PIXEL DENSITY @ {distanceFt} FT</Text>
 
       <View style={styles.valueRow}>
-        <Text style={[styles.ppfValue, { color }]}>{displayPPF}</Text>
-        <Text style={styles.ppfUnit}>PPF</Text>
+        <View style={styles.metric}>
+          <Text style={[styles.ppfValue, { color }]}>{displayPPF}</Text>
+          <Text style={styles.ppfUnit}>PPF</Text>
+        </View>
+        <View style={styles.metricDivider} />
+        <View style={styles.metric}>
+          <Text style={[styles.ppmValue, { color }]}>{displayPPM}</Text>
+          <Text style={styles.ppfUnit}>PPM</Text>
+        </View>
       </View>
 
       <View style={styles.levelRow}>
@@ -77,18 +86,36 @@ const styles = StyleSheet.create({
   },
   valueRow: {
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 0,
+  },
+  metric: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'baseline',
-    gap: 8,
+    gap: 6,
+  },
+  metricDivider: {
+    width: 1,
+    height: 48,
+    backgroundColor: Colors.border,
+    marginHorizontal: 16,
   },
   ppfValue: {
-    fontSize: 52,
+    fontSize: 48,
     fontWeight: '900',
-    lineHeight: 56,
+    lineHeight: 52,
+    fontVariant: ['tabular-nums'],
+  },
+  ppmValue: {
+    fontSize: 36,
+    fontWeight: '900',
+    lineHeight: 40,
     fontVariant: ['tabular-nums'],
   },
   ppfUnit: {
     color: Colors.textMuted,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     letterSpacing: 2,
   },

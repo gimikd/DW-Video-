@@ -8,19 +8,18 @@ import PPFDisplay from '../../components/PPFDisplay';
 import RecognitionDistances from '../../components/RecognitionDistances';
 import { DWCamera } from '../../data/cameras';
 import { calcPPF } from '../../utils/ppf';
+import { DistanceUnit } from '../../components/DistanceInput';
 import { Colors } from '../../constants/Colors';
 
 export default function CalculatorScreen() {
   const [camera, setCamera] = useState<DWCamera | null>(null);
   const [distanceFt, setDistanceFt] = useState(25);
-  const [unit, setUnit] = useState<'ft' | 'm'>('ft');
-
-  const distInFeet = unit === 'm' ? distanceFt * 3.28084 : distanceFt;
+  const [unit, setUnit] = useState<DistanceUnit>('ft');
 
   const ppf = useMemo(() => {
     if (!camera) return 0;
-    return calcPPF(camera.hRes, camera.hFovMax, distInFeet);
-  }, [camera, distInFeet]);
+    return calcPPF(camera.hRes, camera.hFovMax, distanceFt);
+  }, [camera, distanceFt]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -63,18 +62,10 @@ export default function CalculatorScreen() {
         {/* Distance input */}
         <View style={styles.section}>
           <DistanceInput
-            value={distanceFt}
+            valueFt={distanceFt}
             onChange={setDistanceFt}
             unit={unit}
-            onUnitToggle={() => {
-              if (unit === 'ft') {
-                setUnit('m');
-                setDistanceFt(Math.round(distanceFt / 3.28084));
-              } else {
-                setUnit('ft');
-                setDistanceFt(Math.round(distanceFt * 3.28084));
-              }
-            }}
+            onUnitChange={setUnit}
           />
         </View>
 
@@ -88,7 +79,7 @@ export default function CalculatorScreen() {
               <RecognitionDistances
                 hRes={camera.hRes}
                 hFov={camera.hFovMax}
-                currentDistanceFt={distInFeet}
+                currentDistanceFt={distanceFt}
               />
             </View>
             {camera.hFovMin && (

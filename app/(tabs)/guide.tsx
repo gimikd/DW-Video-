@@ -45,17 +45,30 @@ export default function GuideScreen() {
           </View>
         </Section>
 
-        <Section title="DORI RECOGNITION LEVELS">
+        <Section title="DORI STANDARD — OFFICIAL VALUES">
+          {/* Table header */}
+          <View style={styles.doriTable}>
+            <View style={[styles.doriRow, styles.doriHeader]}>
+              <Text style={[styles.doriCell, styles.doriHeaderText, { flex: 1.4 }]}>DORI LEVEL</Text>
+              <Text style={[styles.doriCell, styles.doriHeaderText, { textAlign: 'center' }]}>PPM</Text>
+              <Text style={[styles.doriCell, styles.doriHeaderText, { textAlign: 'center' }]}>PPF</Text>
+            </View>
+            {RECOGNITION_LEVELS.map(level => (
+              <View key={level.id} style={styles.doriRow}>
+                <View style={[styles.levelDot, { backgroundColor: level.color }]} />
+                <Text style={[styles.doriCell, { color: level.color, fontWeight: '700', flex: 1.2 }]}>
+                  {level.label}
+                </Text>
+                <Text style={[styles.doriCell, styles.doriNum]}>≥ {level.minPPM}</Text>
+                <Text style={[styles.doriCell, styles.doriNum]}>≈ {level.minPPF}</Text>
+              </View>
+            ))}
+          </View>
           {RECOGNITION_LEVELS.map(level => (
             <View key={level.id} style={styles.levelCard}>
               <View style={[styles.levelBar, { backgroundColor: level.color }]} />
               <View style={styles.levelContent}>
-                <View style={styles.levelHeader}>
-                  <Text style={[styles.levelName, { color: level.color }]}>{level.label}</Text>
-                  <View style={[styles.ppfBadge, { borderColor: level.color }]}>
-                    <Text style={[styles.ppfBadgeText, { color: level.color }]}>≥ {level.minPPF} PPF</Text>
-                  </View>
-                </View>
+                <Text style={[styles.levelName, { color: level.color }]}>{level.label}</Text>
                 <Text style={styles.levelDesc}>{level.description}</Text>
               </View>
             </View>
@@ -64,14 +77,13 @@ export default function GuideScreen() {
 
         <Section title="FACIAL RECOGNITION SYSTEMS">
           <Text style={styles.body}>
-            Automated facial recognition (FR) systems require a minimum of 60 PPF for reliable
-            identification. Most enterprise FR deployments target 80–100 PPF for court-admissible
-            evidence quality.
+            The DORI "Identify" level (≥ 76 PPF / 250 PPM) is the minimum threshold for automated
+            facial recognition (FR) system enrollment and matching. High-confidence forensic-grade
+            FR typically requires 100+ PPF.
           </Text>
           <View style={styles.table}>
-            <InfoRow label="FR Detection (system trigger)" value="30 PPF" />
-            <InfoRow label="FR Identification (1:1 match)" value="60 PPF" />
-            <InfoRow label="FR High-confidence (forensic)" value="80–100 PPF" />
+            <InfoRow label="FR Enrollment / Match" value="≥ 76 PPF (250 PPM)" />
+            <InfoRow label="FR High-confidence" value="100+ PPF (328+ PPM)" />
           </View>
         </Section>
 
@@ -161,6 +173,46 @@ const styles = StyleSheet.create({
   },
   ppfBadgeText: { fontSize: 10, fontWeight: '700' },
   levelDesc: { color: Colors.textSecondary, fontSize: 12, lineHeight: 18 },
+  doriTable: {
+    backgroundColor: Colors.surface,
+    overflow: 'hidden',
+  },
+  doriHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    backgroundColor: Colors.cardBg,
+  },
+  doriHeaderText: {
+    color: Colors.textMuted,
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1.5,
+  },
+  doriRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    gap: 6,
+  },
+  levelDot: {
+    width: 8,
+    height: 8,
+    flexShrink: 0,
+  },
+  doriCell: {
+    flex: 1,
+    color: Colors.white,
+    fontSize: 13,
+  },
+  doriNum: {
+    color: Colors.white,
+    fontWeight: '700',
+    textAlign: 'center',
+    fontVariant: ['tabular-nums'],
+  },
   table: {
     backgroundColor: Colors.surface,
     overflow: 'hidden',
