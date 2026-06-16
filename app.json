@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "DW Facial Recognition",
+    "slug": "dw-facial-recognition",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "dwfr",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.digitalwatchdog.facialrecognition",
+      "infoPlist": {
+        "NSCameraUsageDescription": "DW Facial Recognition needs camera access to detect and analyze faces.",
+        "NSMicrophoneUsageDescription": "DW Facial Recognition needs microphone access."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000000"
+      },
+      "package": "com.digitalwatchdog.facialrecognition",
+      "permissions": ["CAMERA"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "DW Facial Recognition needs camera access to detect and analyze faces."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
