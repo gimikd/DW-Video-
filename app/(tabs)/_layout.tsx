@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
-import { View, StyleSheet } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -28,28 +27,22 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'CAMERA',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="camera" size={size} color={color} />
-          ),
+          title: 'CALCULATOR',
+          tabBarIcon: ({ color, size }) => <Ionicons name="calculator" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="analytics"
+        name="cameras"
         options={{
-          title: 'ANALYTICS',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart" size={size} color={color} />
-          ),
+          title: 'CAMERAS',
+          tabBarIcon: ({ color, size }) => <Ionicons name="camera" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="guide"
         options={{
-          title: 'SETTINGS',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
-          ),
+          title: 'PPF GUIDE',
+          tabBarIcon: ({ color, size }) => <Ionicons name="book-outline" size={size} color={color} />,
         }}
       />
     </Tabs>

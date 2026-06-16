@@ -1,30 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../constants/Colors';
 
 interface Props {
-  compact?: boolean;
-  faceCount?: number;
   title?: string;
+  subtitle?: string;
 }
 
-export default function DWHeader({ compact = false, faceCount, title }: Props) {
+export default function DWHeader({ title, subtitle }: Props) {
   return (
-    <View style={[styles.container, compact && styles.compact]}>
+    <View style={styles.container}>
       <View style={styles.logoRow}>
         <View style={styles.logoBox}>
           <Text style={styles.logoText}>DW</Text>
         </View>
-        <View style={styles.titleGroup}>
+        <View>
           <Text style={styles.brandName}>DIGITAL WATCHDOG</Text>
-          {!compact && <Text style={styles.tagline}>Built For Users</Text>}
-          {title && <Text style={styles.screenTitle}>{title}</Text>}
+          <Text style={styles.tagline}>Built For Users</Text>
         </View>
       </View>
-      {faceCount !== undefined && (
-        <View style={styles.badge}>
-          <View style={[styles.dot, faceCount > 0 && styles.dotActive]} />
-          <Text style={styles.badgeText}>{faceCount} DETECTED</Text>
+      {title && (
+        <View style={styles.titleBlock}>
+          <Text style={styles.title}>{title}</Text>
+          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
         </View>
       )}
     </View>
@@ -33,16 +31,13 @@ export default function DWHeader({ compact = false, faceCount, title }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    backgroundColor: Colors.darkBg,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: 'rgba(0,0,0,0.85)',
-  },
-  compact: {
-    paddingVertical: 8,
-    backgroundColor: 'transparent',
+    paddingTop: 12,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    gap: 8,
   },
   logoRow: {
     flexDirection: 'row',
@@ -51,19 +46,16 @@ const styles = StyleSheet.create({
   },
   logoBox: {
     backgroundColor: Colors.orange,
-    width: 36,
-    height: 36,
+    width: 34,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoText: {
-    color: Colors.white,
+    color: '#fff',
     fontSize: 14,
     fontWeight: '900',
     letterSpacing: 1,
-  },
-  titleGroup: {
-    gap: 1,
   },
   brandName: {
     color: Colors.white,
@@ -74,38 +66,19 @@ const styles = StyleSheet.create({
   tagline: {
     color: Colors.orange,
     fontSize: 9,
-    fontWeight: '500',
     letterSpacing: 1,
   },
-  screenTitle: {
-    color: Colors.textSecondary,
-    fontSize: 9,
-    letterSpacing: 1,
+  titleBlock: {
+    gap: 2,
   },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(244,121,32,0.15)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 2,
-    borderWidth: 1,
-    borderColor: 'rgba(244,121,32,0.3)',
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Colors.textMuted,
-  },
-  dotActive: {
-    backgroundColor: Colors.success,
-  },
-  badgeText: {
-    color: Colors.orange,
-    fontSize: 10,
+  title: {
+    color: Colors.white,
+    fontSize: 18,
     fontWeight: '700',
-    letterSpacing: 1.5,
+    letterSpacing: 0.5,
+  },
+  subtitle: {
+    color: Colors.textSecondary,
+    fontSize: 12,
   },
 });
