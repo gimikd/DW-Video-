@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DW Camera Calculator – Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; display: flex; justify-content: center; align-items: flex-start; gap: 32px; padding: 32px; font-family: -apple-system, 'Segoe UI', sans-serif; flex-wrap: wrap; }
+
+  /* Phone frame */
+  .phone { width: 390px; background: #000; border-radius: 44px; overflow: hidden; box-shadow: 0 0 0 2px #333, 0 30px 80px rgba(0,0,0,0.7); position: relative; }
+  .phone-notch { height: 44px; background: #000; display: flex; align-items: center; justify-content: center; }
+  .notch-pill { width: 120px; height: 34px; background: #111; border-radius: 20px; }
+  .screen { background: #080808; min-height: 720px; display: flex; flex-direction: column; }
+
+  /* Colors */
+  :root {
+    --orange: #F47920;
+    --orange-glow: rgba(244,121,32,0.15);
+    --black: #000;
+    --dark: #080808;
+    --card: #101010;
+    --surface: #181818;
+    --border: #242424;
+    --white: #fff;
+    --gray: #aaa;
+    --muted: #505050;
+    --green: #4CAF50;
+    --blue: #2196F3;
+    --amber: #FF9800;
+  }
+
+  /* Header */
+  .header { background: #0A0A0A; border-bottom: 1px solid var(--border); padding: 12px 16px 10px; }
+  .header-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .logo-box { background: var(--orange); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-box span { color: #fff; font-size: 13px; font-weight: 900; letter-spacing: 1px; }
+  .brand-name { color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+  .tagline { color: var(--orange); font-size: 9px; letter-spacing: 1px; margin-top: 1px; }
+  .screen-title { color: #fff; font-size: 18px; font-weight: 700; margin-top: 4px; }
+  .screen-subtitle { color: var(--gray); font-size: 12px; margin-top: 1px; }
+
+  /* Tab bar */
+  .tab-bar { display: flex; background: #0A0A0A; border-top: 1px solid var(--border); padding: 8px 0; margin-top: auto; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+  .tab-icon { font-size: 20px; }
+  .tab-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--muted); }
+  .tab.active .tab-label { color: var(--orange); }
+  .tab.active .tab-icon { filter: none; }
+  .tab-icon-calc { color: var(--muted); }
+  .tab.active .tab-icon-calc { color: var(--orange); }
+
+  /* Scroll content */
+  .scroll { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .scroll::-webkit-scrollbar { display: none; }
+
+  /* Section label */
+  .section-label { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 2px; margin-bottom: 4px; }
+
+  /* Camera selector */
+  .cam-selector { background: var(--card); border: 1px solid var(--border); padding: 12px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .cam-selector-icon { color: var(--orange); font-size: 18px; }
+  .cam-model { color: #fff; font-size: 14px; font-weight: 700; }
+  .cam-name { color: var(--gray); font-size: 11px; margin-top: 2px; }
+  .chevron { color: var(--muted); font-size: 16px; margin-left: auto; }
+
+  /* Spec card */
+  .spec-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--orange); padding: 12px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+  .spec-key { color: var(--muted); font-size: 12px; }
+  .spec-val { color: #fff; font-size: 12px; font-weight: 600; text-align: right; }
+
+  /* Distance input */
+  .dist-card { background: var(--card); border: 1px solid var(--border); padding: 16px; }
+  .dist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .unit-selector { display: flex; border: 1px solid var(--border); overflow: hidden; }
+  .unit-opt { padding: 4px 12px; background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: 1px; cursor: pointer; }
+  .unit-opt.active { background: var(--orange); color: #fff; }
+  .dist-main-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .dist-btn { width: 48px; height: 56px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: pointer; }
+  .dist-value-wrap { flex: 1; background: var(--surface); border: 1px solid var(--orange); height: 56px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .dist-value { color: #fff; font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .dist-unit { color: var(--orange); font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+  .dist-secondary { color: var(--muted); font-size: 11px; text-align: center; margin-bottom: 10px; }
+  .step-row { display: flex; gap: 6px; }
+  .step-btn { flex: 1; padding: 7px 0; background: var(--surface); border: 1px solid var(--border); color: var(--gray); font-size: 12px; font-weight: 600; text-align: center; cursor: pointer; }
+
+  /* PPF Display */
+  .ppf-card { background: var(--card); border: 1px solid var(--border); padding: 16px; }
+  .ppf-values-row { display: flex; align-items: center; gap: 0; margin: 8px 0; }
+  .ppf-metric { flex: 1; display: flex; align-items: baseline; gap: 6px; }
+  .ppf-big { font-size: 48px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+  .ppm-big { font-size: 34px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+  .ppf-unit-label { color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: 2px; }
+  .metric-divider { width: 1px; height: 48px; background: var(--border); margin: 0 16px; }
+  .level-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .level-dot { width: 10px; height: 10px; flex-shrink: 0; }
+  .level-name { font-size: 13px; font-weight: 800; letter-spacing: 2px; }
+  .level-desc { color: var(--gray); font-size: 12px; line-height: 1.5; margin-bottom: 10px; }
+  .bar-track { height: 8px; background: var(--surface); border-radius: 2px; overflow: hidden; margin-bottom: 4px; position: relative; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-markers { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .tick { font-size: 9px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tick-names { display: flex; justify-content: space-between; }
+  .tick-name { color: var(--muted); font-size: 8px; letter-spacing: 0.5px; }
+
+  /* Recognition distances */
+  .recog-card { background: var(--card); border: 1px solid var(--border); padding: 16px; }
+  .recog-row { display: flex; align-items: center; gap: 12px; margin: 6px 0; }
+  .recog-left { width: 90px; display: flex; align-items: center; gap: 6px; }
+  .recog-dot { width: 8px; height: 8px; flex-shrink: 0; }
+  .recog-label { font-size: 11px; font-weight: 600; color: var(--gray); }
+  .recog-right { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .recog-bar-track { flex: 1; height: 6px; background: var(--surface); border-radius: 1px; overflow: hidden; position: relative; }
+  .recog-bar-fill { height: 100%; border-radius: 1px; }
+  .recog-marker { position: absolute; top: -2px; width: 2px; height: 10px; background: #fff; border-radius: 1px; }
+  .recog-dist { width: 52px; text-align: right; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .recog-note { color: var(--muted); font-size: 10px; font-style: italic; margin-top: 8px; }
+
+  /* Varifocal note */
+  .varifocal-note { background: rgba(255,152,0,0.1); border: 1px solid rgba(255,152,0,0.3); padding: 12px; }
+  .varifocal-text { color: #FFB74D; font-size: 11px; line-height: 1.6; }
+
+  /* Camera list screen */
+  .search-row { background: var(--card); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+  .search-icon { color: var(--muted); }
+  .search-input { flex: 1; background: none; border: none; color: #fff; font-size: 14px; outline: none; }
+  .search-input::placeholder { color: var(--muted); }
+  .filter-row { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .filter-btn { padding: 5px 12px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 1px; white-space: nowrap; cursor: pointer; }
+  .filter-btn.active { border-color: var(--orange); background: var(--orange-glow); color: var(--orange); }
+  .cam-card { padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--dark); }
+  .cam-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .cam-card-model { color: var(--orange); font-size: 13px; font-weight: 800; letter-spacing: 0.5px; }
+  .cam-card-name { color: #fff; font-size: 13px; margin-top: 2px; }
+  .mp-badge { background: var(--card); border: 1px solid var(--border); padding: 3px 8px; color: var(--gray); font-size: 11px; font-weight: 700; }
+  .cam-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .chip { background: var(--surface); color: var(--muted); font-size: 10px; padding: 3px 8px; border-radius: 2px; }
+  .cam-distances { display: flex; background: var(--card); border: 1px solid var(--border); padding: 10px 0; }
+  .dist-item { flex: 1; text-align: center; border-right: 1px solid var(--border); }
+  .dist-item:last-child { border-right: none; }
+  .dist-item-label { color: var(--muted); font-size: 9px; letter-spacing: 1px; margin-bottom: 4px; }
+  .dist-item-val { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* Guide screen */
+  .guide-section { background: var(--card); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
+  .guide-section-title { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 2.5px; margin-bottom: 12px; }
+  .body-text { color: var(--gray); font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+  .formula-box { background: var(--surface); border-left: 3px solid var(--orange); padding: 12px; }
+  .formula-main { color: #fff; font-size: 13px; font-weight: 700; font-family: monospace; margin-bottom: 4px; }
+  .formula-sub { color: var(--gray); font-size: 11px; font-family: monospace; }
+  .dori-table { background: var(--surface); overflow: hidden; }
+  .dori-header-row { display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--card); }
+  .dori-header-cell { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); }
+  .dori-row { display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); gap: 6px; }
+  .dori-dot { width: 8px; height: 8px; flex-shrink: 0; }
+  .dori-level-name { flex: 1.2; font-size: 13px; font-weight: 700; }
+  .dori-num { flex: 1; text-align: center; font-size: 13px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+  .level-card { display: flex; background: var(--surface); margin-top: 6px; overflow: hidden; }
+  .level-card-bar { width: 4px; flex-shrink: 0; }
+  .level-card-content { flex: 1; padding: 10px 12px; }
+  .level-card-name { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+  .level-card-desc { color: var(--gray); font-size: 12px; line-height: 1.5; margin-top: 3px; }
+  .info-table { background: var(--surface); }
+  .info-row { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .info-label { color: var(--gray); font-size: 12px; }
+  .info-val { color: #fff; font-size: 12px; font-weight: 600; }
+  .tip-text { color: var(--gray); font-size: 13px; line-height: 1.7; }
+  .footer-dw { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .footer-box { background: var(--orange); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+  .footer-box span { color: #fff; font-size: 16px; font-weight: 900; letter-spacing: 1px; }
+  .footer-brand { color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+  .footer-tag { color: var(--muted); font-size: 10px; margin-top: 2px; }
+
+  /* Page labels */
+  .page-label { color: #fff; font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 16px; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN 1: CALCULATOR
+═══════════════════════════════════════════════════════════ -->
+<div>
+  <p class="page-label">① CALCULATOR</p>
+  <div class="phone">
+    <div class="phone-notch"><div class="notch-pill"></div></div>
+    <div class="screen">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-logo-row">
+          <div class="logo-box"><span>DW</span></div>
+          <div>
+            <div class="brand-name">DIGITAL WATCHDOG</div>
+            <div class="tagline">Built For Users</div>
+          </div>
+        </div>
+        <div class="screen-title">PPF Calculator</div>
+        <div class="screen-subtitle">Pixels Per Foot · Facial Recognition Range</div>
+      </div>
+
+      <div class="scroll">
+        <!-- Camera selector -->
+        <div>
+          <div class="section-label">CAMERA MODEL</div>
+          <div class="cam-selector">
+            <div class="cam-selector-icon">🎯</div>
+            <div>
+              <div class="cam-model">DWC-MT95WiATW</div>
+              <div class="cam-name">MEGApix Mx95 5MP Turret Varifocal AF</div>
+            </div>
+            <div class="chevron">⌄</div>
+          </div>
+        </div>
+
+        <!-- Spec card -->
+        <div class="spec-card">
+          <div class="spec-row">
+            <span class="spec-key">Resolution</span>
+            <span class="spec-val">2592 × 1944 (5MP)</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">HFOV</span>
+            <span class="spec-val">30° – 95.1°</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Lens</span>
+            <span class="spec-val">2.8-12mm Varifocal AF</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Series</span>
+            <span class="spec-val">MEGApix Mx95</span>
+          </div>
+        </div>
+
+        <!-- Distance input -->
+        <div class="dist-card">
+          <div class="dist-header">
+            <div class="section-label" style="margin:0">TARGET DISTANCE</div>
+            <div class="unit-selector">
+              <div class="unit-opt active">ft</div>
+              <div class="unit-opt">m</div>
+            </div>
+          </div>
+          <div class="dist-main-row">
+            <div class="dist-btn">−</div>
+            <div class="dist-value-wrap">
+              <div class="dist-value">25</div>
+              <div class="dist-unit">ft</div>
+            </div>
+            <div class="dist-btn">+</div>
+          </div>
+          <div class="dist-secondary">≈ 7.6 m</div>
+          <div class="step-row">
+            <div class="step-btn">+1</div>
+            <div class="step-btn">+5</div>
+            <div class="step-btn">+10</div>
+            <div class="step-btn">+25</div>
+            <div class="step-btn">+50</div>
+          </div>
+        </div>
+
+        <!-- PPF Display -->
+        <div class="ppf-card">
+          <div class="section-label">PIXEL DENSITY @ 25 FT</div>
+          <div class="ppf-values-row">
+            <div class="ppf-metric">
+              <span class="ppf-big" style="color:#FF9800">49.3</span>
+              <span class="ppf-unit-label">PPF</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="ppf-metric">
+              <span class="ppm-big" style="color:#FF9800">161</span>
+              <span class="ppf-unit-label">PPM</span>
+            </div>
+          </div>
+          <div class="level-row">
+            <div class="level-dot" style="background:#FF9800"></div>
+            <span class="level-name" style="color:#FF9800">RECOGNIZE</span>
+          </div>
+          <div class="level-desc">A known person can be recognized</div>
+          <!-- Progress bar -->
+          <div class="bar-track">
+            <div class="bar-fill" style="width:65%;background:#FF9800"></div>
+          </div>
+          <div class="bar-markers">
+            <span class="tick" style="color:#4CAF50">8</span>
+            <span class="tick" style="color:#2196F3">19</span>
+            <span class="tick" style="color:#FF9800">38</span>
+            <span class="tick" style="color:#F47920">76</span>
+          </div>
+          <div class="tick-names">
+            <span class="tick-name">Detect</span>
+            <span class="tick-name">Observe</span>
+            <span class="tick-name">Recognize</span>
+            <span class="tick-name">Identify</span>
+          </div>
+        </div>
+
+        <!-- Recognition distances -->
+        <div class="recog-card">
+          <div class="section-label" style="margin-bottom:10px">MAX DISTANCES BY RECOGNITION LEVEL</div>
+
+          <div class="recog-row">
+            <div class="recog-left">
+              <div class="recog-dot" style="background:#4CAF50"></div>
+              <span class="recog-label" style="color:#4CAF50">Detect</span>
+            </div>
+            <div class="recog-right">
+              <div class="recog-bar-track">
+                <div class="recog-bar-fill" style="width:100%;background:#4CAF50"></div>
+                <div class="recog-marker" style="left:16%"></div>
+              </div>
+              <span class="recog-dist" style="color:#4CAF50">154 ft</span>
+            </div>
+          </div>
+
+          <div class="recog-row">
+            <div class="recog-left">
+              <div class="recog-dot" style="background:#2196F3"></div>
+              <span class="recog-label" style="color:#2196F3">Observe</span>
+            </div>
+            <div class="recog-right">
+              <div class="recog-bar-track">
+                <div class="recog-bar-fill" style="width:74%;background:#2196F3"></div>
+                <div class="recog-marker" style="left:22%"></div>
+              </div>
+              <span class="recog-dist" style="color:#2196F3">65 ft</span>
+            </div>
+          </div>
+
+          <div class="recog-row">
+            <div class="recog-left">
+              <div class="recog-dot" style="background:#FF9800"></div>
+              <span class="recog-label" style="color:#FF9800">Recognize</span>
+            </div>
+            <div class="recog-right">
+              <div class="recog-bar-track">
+                <div class="recog-bar-fill" style="width:42%;background:#FF9800"></div>
+                <div class="recog-marker" style="left:39%"></div>
+              </div>
+              <span class="recog-dist" style="color:#FF9800">32 ft</span>
+            </div>
+          </div>
+
+          <div class="recog-row">
+            <div class="recog-left">
+              <div class="recog-dot" style="background:#F47920"></div>
+              <span class="recog-label" style="color:#F47920">Identify</span>
+            </div>
+            <div class="recog-right">
+              <div class="recog-bar-track">
+                <div class="recog-bar-fill" style="width:21%;background:#F47920"></div>
+                <div class="recog-marker" style="left:78%"></div>
+              </div>
+              <span class="recog-dist" style="color:#F47920">16 ft</span>
+            </div>
+          </div>
+
+          <div class="recog-note">White marker = current target (25 ft)</div>
+        </div>
+
+        <div class="varifocal-note">
+          <div class="varifocal-text">⚠ Varifocal lens: calculation uses widest FOV (95.1°). At narrowest FOV (30°), identification distance extends to ~51 ft.</div>
+        </div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <div class="tab active">
+          <div style="color:var(--orange);font-size:20px">⊟</div>
+          <div class="tab-label" style="color:var(--orange)">CALCULATOR</div>
+        </div>
+        <div class="tab">
+          <div style="color:var(--muted);font-size:20px">📷</div>
+          <div class="tab-label">CAMERAS</div>
+        </div>
+        <div class="tab">
+          <div style="color:var(--muted);font-size:20px">📖</div>
+          <div class="tab-label">PPF GUIDE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN 2: CAMERAS
+═══════════════════════════════════════════════════════════ -->
+<div>
+  <p class="page-label">② CAMERA LIBRARY</p>
+  <div class="phone">
+    <div class="phone-notch"><div class="notch-pill"></div></div>
+    <div class="screen">
+      <div class="header">
+        <div class="header-logo-row">
+          <div class="logo-box"><span>DW</span></div>
+          <div>
+            <div class="brand-name">DIGITAL WATCHDOG</div>
+            <div class="tagline">Built For Users</div>
+          </div>
+        </div>
+        <div class="screen-title">Camera Library</div>
+        <div class="screen-subtitle">36 DW MEGApix models</div>
+      </div>
+
+      <div class="search-row">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" placeholder="Search models…" />
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-btn active">All</div>
+        <div class="filter-btn">Dome</div>
+        <div class="filter-btn">Bullet</div>
+        <div class="filter-btn">Turret</div>
+        <div class="filter-btn">PTZ</div>
+        <div class="filter-btn">Multi</div>
+      </div>
+
+      <div style="flex:1;overflow-y:auto">
+
+        <!-- Camera card 1 -->
+        <div class="cam-card">
+          <div class="cam-card-top">
+            <div>
+              <div class="cam-card-model">DWC-XPZA08MI</div>
+              <div class="cam-card-name">MEGApix Ai 4K PTZ 40× Zoom</div>
+            </div>
+            <div class="mp-badge">8MP</div>
+          </div>
+          <div class="cam-chips">
+            <span class="chip">3840×2160</span>
+            <span class="chip">1.7°–63.5° HFOV</span>
+            <span class="chip">40× Optical Zoom</span>
+          </div>
+          <div class="cam-distances">
+            <div class="dist-item">
+              <div class="dist-item-label">RECOGNIZE</div>
+              <div class="dist-item-val" style="color:#FF9800">247 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">FR IDENTIFY</div>
+              <div class="dist-item-val" style="color:#F47920">124 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">LOCATION</div>
+              <div class="dist-item-val" style="color:var(--gray);font-size:11px">Outdoor</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera card 2 -->
+        <div class="cam-card">
+          <div class="cam-card-top">
+            <div>
+              <div class="cam-card-model">DWC-MPVD8WiATW</div>
+              <div class="cam-card-name">MEGApix 4K Dome Varifocal</div>
+            </div>
+            <div class="mp-badge">8MP</div>
+          </div>
+          <div class="cam-chips">
+            <span class="chip">3840×2160</span>
+            <span class="chip">33.1°–90.3° HFOV</span>
+            <span class="chip">2.8-12mm Varifocal</span>
+          </div>
+          <div class="cam-distances">
+            <div class="dist-item">
+              <div class="dist-item-label">RECOGNIZE</div>
+              <div class="dist-item-val" style="color:#FF9800">62 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">FR IDENTIFY</div>
+              <div class="dist-item-val" style="color:#F47920">31 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">LOCATION</div>
+              <div class="dist-item-val" style="color:var(--gray);font-size:11px">Outdoor</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera card 3 -->
+        <div class="cam-card">
+          <div class="cam-card-top">
+            <div>
+              <div class="cam-card-model">DWC-MT95WiATW</div>
+              <div class="cam-card-name">MEGApix Mx95 5MP Turret Varifocal AF</div>
+            </div>
+            <div class="mp-badge">5MP</div>
+          </div>
+          <div class="cam-chips">
+            <span class="chip">2592×1944</span>
+            <span class="chip">30°–95.1° HFOV</span>
+            <span class="chip">2.8-12mm AF</span>
+          </div>
+          <div class="cam-distances">
+            <div class="dist-item">
+              <div class="dist-item-label">RECOGNIZE</div>
+              <div class="dist-item-val" style="color:#FF9800">32 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">FR IDENTIFY</div>
+              <div class="dist-item-val" style="color:#F47920">16 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">LOCATION</div>
+              <div class="dist-item-val" style="color:var(--gray);font-size:11px">Outdoor</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera card 4 -->
+        <div class="cam-card">
+          <div class="cam-card-top">
+            <div>
+              <div class="cam-card-model">DWC-VSTB04Bi</div>
+              <div class="cam-card-name">MEGApix V-Class 4MP Turret</div>
+            </div>
+            <div class="mp-badge">4MP</div>
+          </div>
+          <div class="cam-chips">
+            <span class="chip">2560×1440</span>
+            <span class="chip">94° HFOV</span>
+            <span class="chip">2.8mm Fixed</span>
+          </div>
+          <div class="cam-distances">
+            <div class="dist-item">
+              <div class="dist-item-label">RECOGNIZE</div>
+              <div class="dist-item-val" style="color:#FF9800">20 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">FR IDENTIFY</div>
+              <div class="dist-item-val" style="color:#F47920">10 ft</div>
+            </div>
+            <div class="dist-item">
+              <div class="dist-item-label">LOCATION</div>
+              <div class="dist-item-val" style="color:var(--gray);font-size:11px">Outdoor</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab">
+          <div style="color:var(--muted);font-size:20px">⊟</div>
+          <div class="tab-label">CALCULATOR</div>
+        </div>
+        <div class="tab active">
+          <div style="color:var(--orange);font-size:20px">📷</div>
+          <div class="tab-label" style="color:var(--orange)">CAMERAS</div>
+        </div>
+        <div class="tab">
+          <div style="color:var(--muted);font-size:20px">📖</div>
+          <div class="tab-label">PPF GUIDE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN 3: PPF GUIDE
+═══════════════════════════════════════════════════════════ -->
+<div>
+  <p class="page-label">③ PPF GUIDE</p>
+  <div class="phone">
+    <div class="phone-notch"><div class="notch-pill"></div></div>
+    <div class="screen">
+      <div class="header">
+        <div class="header-logo-row">
+          <div class="logo-box"><span>DW</span></div>
+          <div>
+            <div class="brand-name">DIGITAL WATCHDOG</div>
+            <div class="tagline">Built For Users</div>
+          </div>
+        </div>
+        <div class="screen-title">PPF Reference Guide</div>
+        <div class="screen-subtitle">Pixels Per Foot for Facial Recognition</div>
+      </div>
+
+      <div class="scroll">
+
+        <div class="guide-section">
+          <div class="guide-section-title">WHAT IS PPF?</div>
+          <div class="body-text">Pixels Per Foot (PPF) measures how many pixels cover one linear foot of the scene at a given distance. Higher PPF = more detail = better recognition.</div>
+          <div class="formula-box">
+            <div class="formula-main">PPF = H. Resolution ÷ Scene Width (ft)</div>
+            <div class="formula-sub">Scene Width = 2 × Distance × tan(HFOV ÷ 2)</div>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">DORI STANDARD — OFFICIAL VALUES</div>
+          <div class="dori-table">
+            <div class="dori-header-row">
+              <div style="flex:0 0 16px"></div>
+              <div class="dori-header-cell" style="flex:1.2">DORI LEVEL</div>
+              <div class="dori-header-cell" style="flex:1;text-align:center">PPM</div>
+              <div class="dori-header-cell" style="flex:1;text-align:center">PPF</div>
+            </div>
+            <div class="dori-row">
+              <div class="dori-dot" style="background:#4CAF50"></div>
+              <div class="dori-level-name" style="color:#4CAF50">Detect</div>
+              <div class="dori-num">≥ 25</div>
+              <div class="dori-num">≈ 8</div>
+            </div>
+            <div class="dori-row">
+              <div class="dori-dot" style="background:#2196F3"></div>
+              <div class="dori-level-name" style="color:#2196F3">Observe</div>
+              <div class="dori-num">≥ 63</div>
+              <div class="dori-num">≈ 19</div>
+            </div>
+            <div class="dori-row">
+              <div class="dori-dot" style="background:#FF9800"></div>
+              <div class="dori-level-name" style="color:#FF9800">Recognize</div>
+              <div class="dori-num">≥ 125</div>
+              <div class="dori-num">≈ 38</div>
+            </div>
+            <div class="dori-row">
+              <div class="dori-dot" style="background:#F47920"></div>
+              <div class="dori-level-name" style="color:#F47920">Identify</div>
+              <div class="dori-num">≥ 250</div>
+              <div class="dori-num">≈ 76</div>
+            </div>
+          </div>
+          <div class="level-card" style="margin-top:8px">
+            <div class="level-card-bar" style="background:#4CAF50"></div>
+            <div class="level-card-content">
+              <div class="level-card-name" style="color:#4CAF50">Detect</div>
+              <div class="level-card-desc">Presence of a person can be detected</div>
+            </div>
+          </div>
+          <div class="level-card">
+            <div class="level-card-bar" style="background:#2196F3"></div>
+            <div class="level-card-content">
+              <div class="level-card-name" style="color:#2196F3">Observe</div>
+              <div class="level-card-desc">Actions and behavior can be observed</div>
+            </div>
+          </div>
+          <div class="level-card">
+            <div class="level-card-bar" style="background:#FF9800"></div>
+            <div class="level-card-content">
+              <div class="level-card-name" style="color:#FF9800">Recognize</div>
+              <div class="level-card-desc">A known person can be recognized</div>
+            </div>
+          </div>
+          <div class="level-card">
+            <div class="level-card-bar" style="background:#F47920"></div>
+            <div class="level-card-content">
+              <div class="level-card-name" style="color:#F47920">Identify</div>
+              <div class="level-card-desc">Subject can be identified for facial recognition systems</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">FACIAL RECOGNITION SYSTEMS</div>
+          <div class="body-text">The DORI "Identify" level (≥ 76 PPF / 250 PPM) is the minimum for FR enrollment and matching. High-confidence forensic-grade FR typically requires 100+ PPF.</div>
+          <div class="info-table">
+            <div class="info-row"><span class="info-label">FR Enrollment / Match</span><span class="info-val">≥ 76 PPF (250 PPM)</span></div>
+            <div class="info-row"><span class="info-label">FR High-confidence</span><span class="info-val">100+ PPF (328+ PPM)</span></div>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">DW PRODUCT LINES</div>
+          <div class="info-table">
+            <div class="info-row"><span class="info-label">MEGApix</span><span class="info-val">AI IP cameras (2–21MP)</span></div>
+            <div class="info-row"><span class="info-label">Blackjack</span><span class="info-val">NVR / DVR recorders</span></div>
+            <div class="info-row"><span class="info-label">DW Spectrum</span><span class="info-val">Video Management Software</span></div>
+            <div class="info-row"><span class="info-label">DW Cloud</span><span class="info-val">Cloud-based VMS</span></div>
+          </div>
+        </div>
+
+        <div class="guide-section">
+          <div class="guide-section-title">TIPS FOR HIGHER PPF</div>
+          <div class="tip-text">• Use narrower FOV — tightest varifocal setting</div>
+          <div class="tip-text">• 4K gives 2× the PPF of 1080p at same FOV</div>
+          <div class="tip-text">• PPF drops linearly with distance — closer = better</div>
+          <div class="tip-text">• Mount at face height to minimize distortion</div>
+          <div class="tip-text">• Avoid ultra-wide lenses for FR applications</div>
+        </div>
+
+        <div class="footer-dw">
+          <div class="footer-box"><span>DW</span></div>
+          <div>
+            <div class="footer-brand">DIGITAL WATCHDOG</div>
+            <div class="footer-tag">Built For Users · digital-watchdog.com</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab">
+          <div style="color:var(--muted);font-size:20px">⊟</div>
+          <div class="tab-label">CALCULATOR</div>
+        </div>
+        <div class="tab">
+          <div style="color:var(--muted);font-size:20px">📷</div>
+          <div class="tab-label">CAMERAS</div>
+        </div>
+        <div class="tab active">
+          <div style="color:var(--orange);font-size:20px">📖</div>
+          <div class="tab-label" style="color:var(--orange)">PPF GUIDE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
